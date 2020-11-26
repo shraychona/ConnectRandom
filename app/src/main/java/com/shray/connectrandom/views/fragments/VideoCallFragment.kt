@@ -1,15 +1,11 @@
 package com.shray.connectrandom.views.fragments
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.shray.connectrandom.R
 import com.shray.connectrandom.views.utils.inflate
@@ -26,11 +22,20 @@ class VideoCallFragment : Fragment() {
 
     companion object {
         const val TAG = "VideoCallFragment"
-        private const val PERMISSION_REQ_ID = 22
+        private const val BUNDLE_EXTRAS_CHANNEL_ID = "channelId"
+
+        fun newInstance(channelId: String): VideoCallFragment {
+            return VideoCallFragment().apply {
+                arguments = Bundle().apply {
+                    putString(BUNDLE_EXTRAS_CHANNEL_ID, channelId)
+                }
+            }
+        }
     }
 
     private var mRtcEngine: RtcEngine? = null
     private lateinit var mRtcEventHandler: IRtcEngineEventHandler
+    private val channelId by lazy { requireArguments().getString(BUNDLE_EXTRAS_CHANNEL_ID, "") }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -39,12 +44,7 @@ class VideoCallFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // If all the permissions are granted, initialize the RtcEngine object
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID) &&
-            checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID)
-        ) {
-            initializeAgoraVariables()
-        }
+        initializeAgoraVariables()
     }
 
     private fun initializeAgoraVariables() {
@@ -68,7 +68,6 @@ class VideoCallFragment : Fragment() {
             }
         }
         try {
-
             mRtcEngine =
                 RtcEngine.create(context, getString(R.string.agora_app_id), mRtcEventHandler)
             joinChannel()
@@ -99,7 +98,7 @@ class VideoCallFragment : Fragment() {
     private fun joinChannel() {
 
         // Join a channel with a token.
-        mRtcEngine!!.joinChannel(null, "demoChannel1", "Extra Optional Data", 0)
+        mRtcEngine!!.joinChannel(null, channelId, "Random Video", 0)
     }
 
 
@@ -124,24 +123,7 @@ class VideoCallFragment : Fragment() {
 //            // Destroys remote view
 //            mRemoteVideo = null
 //        }
-    }
-
-    private fun checkSelfPermission(permission: String, requestCode: Int): Boolean {
-        Log.i(TAG, "checkSelfPermission $permission $requestCode")
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                permission
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(permission),
-                requestCode
-            )
-            return false
-        }
-        return true
+        activity?.supportFragmentManager?.popBackStack()
     }
 
     override fun onDestroy() {

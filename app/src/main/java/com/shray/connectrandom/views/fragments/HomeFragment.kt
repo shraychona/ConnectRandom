@@ -18,6 +18,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.shray.connectrandom.R
+import com.shray.connectrandom.views.activities.MainActivity
 import com.shray.connectrandom.views.utils.inflate
 import kotlinx.android.synthetic.main.dialog_finding_partner.*
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -138,6 +139,7 @@ class HomeFragment : Fragment() {
                 // connect with channel id
                 Log.d(TAG, "Update success")
                 Log.d(TAG, "video call started")
+                startVideoCall(documentId)
             }
             .addOnFailureListener {
                 Log.d(TAG, "update failed")
@@ -176,12 +178,21 @@ class HomeFragment : Fragment() {
                         dialog.hide()
                         countdownTimer.cancel()
                         isRunning = false
+                        startVideoCall(documentId)
                     }
                 } else {
                     Log.d(TAG, "Current data: null")
                 }
             } else return@addSnapshotListener
         }
+    }
+
+    // start Video call
+    private fun startVideoCall(channelId: String) {
+        (activity as MainActivity).doFragmentTransaction(
+            VideoCallFragment.newInstance(channelId),
+            VideoCallFragment.TAG
+        )
     }
 
     override fun onDestroy() {
