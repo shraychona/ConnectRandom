@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ConnectRandom"
         android:requestLegacyExternalStorage="true">
-        <activity android:name=".MainActivity">
+        <activity android:name=".views.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

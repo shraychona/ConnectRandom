@@ -1,10 +1,10 @@
-package com.shray.connectrandom
+package com.shray.connectrandom.views.activities
 
 import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
+import com.shray.connectrandom.R
 import com.shray.connectrandom.views.fragments.HomeFragment
-import com.shray.connectrandom.views.fragments.VideoCallFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
