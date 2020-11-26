@@ -76,6 +76,7 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <ImageButton
+        android:id="@+id/ibConnectCall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_connect"
