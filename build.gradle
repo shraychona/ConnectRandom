@@ -29,6 +29,7 @@ ext {
             architectureComponentsVersion: "2.2.0",
             appcompat                    : "1.1.0",
             constraintLayout             : "2.0.4",
+            runtimePermissions           : "3.0.0-RC4",
             adMob                        : "19.5.0"
     ]
 }
