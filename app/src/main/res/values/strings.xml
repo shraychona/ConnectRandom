@@ -1,3 +1,10 @@
 <resources>
+    <!-- Misc-->
     <string name="app_name">ConnectRandom</string>
+    <string name="agora_app_id">5a4d1282826f4431b5654622e41e89ab</string>
+
+    <!--home screen fragment-->
+    <string name="home_screen_heading_label">Hello! User</string>
+    <string name="home_screen_sub_heading">Here you will get experience to use our video calling feature</string>
+    <string name="home_screen_connect_call_label">Click here to start video call</string>
 </resources>
