@@ -10,8 +10,11 @@ import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.shray.connectrandom.R
 import com.shray.connectrandom.views.utils.inflate
+import kotlinx.android.synthetic.main.fragment_home.*
 
 /**
  * @author shraychona@gmail.com
@@ -30,6 +33,10 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        MobileAds.initialize(activity) {}
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
 
         // If all the permissions are granted, initialize the RtcEngine object
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO, PERMISSION_REQ_ID) &&
