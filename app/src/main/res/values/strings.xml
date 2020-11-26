@@ -8,7 +8,4 @@
     <string name="home_screen_sub_heading">Here you will get experience to use our video calling feature</string>
     <string name="home_screen_connect_call_label">Click here to start video call</string>
 
-    <!--firestore Keywords-->
-    <string name="firestore_key_time_stamp">timeStamp</string>
-    <string name="firestore_key_is_consumed">isConsumed</string>
 </resources>
