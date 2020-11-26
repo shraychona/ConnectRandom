@@ -52,10 +52,10 @@ class HomeFragment : Fragment() {
 
     private fun findChannelId() {
         val calenderTime = Calendar.getInstance()
-        calenderTime.add(Calendar.SECOND, 15)
+        calenderTime.add(Calendar.SECOND, -15)
         val timestamp = Timestamp(Date(calenderTime.time.time))
 
-        db.whereLessThanOrEqualTo(getString(R.string.firestore_key_time_stamp), timestamp)
+        db.whereGreaterThanOrEqualTo(getString(R.string.firestore_key_time_stamp), timestamp)
             .whereEqualTo(getString(R.string.firestore_key_is_consumed), false).get()
             .addOnSuccessListener {
                 if (it.documents.isNotEmpty()) {
@@ -63,7 +63,7 @@ class HomeFragment : Fragment() {
                     consumeChannel(document.id)
                 } else createNewChannel()
             }.addOnFailureListener {
-                Log.d(TAG,"Fetch failed : ${it.message}")
+                Log.d(TAG, "Fetch failed : ${it.message}")
             }
     }
 
@@ -73,10 +73,10 @@ class HomeFragment : Fragment() {
         documentRef.update(getString(R.string.firestore_key_is_consumed), true)
             .addOnSuccessListener {
                 // connect with channel id
-                Log.d(TAG,"Update success")
+                Log.d(TAG, "Update success")
             }
             .addOnFailureListener {
-                Log.d(TAG,"update failed")
+                Log.d(TAG, "update failed")
             }
     }
 
@@ -87,10 +87,10 @@ class HomeFragment : Fragment() {
         )
         db.add(newChannel)
             .addOnSuccessListener {
-                Log.d(TAG,"Add success")
+                Log.d(TAG, "Add success")
             }
             .addOnFailureListener {
-                Log.d(TAG,"Add failed")
+                Log.d(TAG, "Add failed")
             }
     }
 }
