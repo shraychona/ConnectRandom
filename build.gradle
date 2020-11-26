@@ -21,6 +21,15 @@ allprojects {
     }
 }
 
+ext {
+
+    dependencies = [
+            architectureComponentsVersion: "2.2.0",
+            appcompat                    : "1.1.0",
+            constraintLayout             : "2.0.4"
+    ]
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
