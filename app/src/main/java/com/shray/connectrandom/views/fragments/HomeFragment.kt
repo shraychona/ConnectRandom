@@ -46,7 +46,7 @@ class HomeFragment : Fragment() {
     private var isRunning: Boolean = false
     private var dialog: Dialog? = null
     private var documentListener: ListenerRegistration? = null
-
+    private var currentDocumentId: String? = null
 
     /**
      * Fragment lifecycle methods
@@ -86,6 +86,7 @@ class HomeFragment : Fragment() {
                     "No user found please try again after some time",
                     Toast.LENGTH_SHORT
                 ).show()
+                currentDocumentId = null
                 isRunning = false
             }
 
@@ -107,6 +108,7 @@ class HomeFragment : Fragment() {
                 isRunning = false
                 documentListener?.remove()
                 hideDialog()
+                currentDocumentId?.let { consumeChannel(it) }
             }
         }
     }
@@ -161,6 +163,7 @@ class HomeFragment : Fragment() {
             .addOnSuccessListener {
                 startTimer()
                 observeCreatedChannel(it.id)
+                currentDocumentId = it.id
                 Log.d(TAG, "Add success")
             }
             .addOnFailureListener {
@@ -194,6 +197,7 @@ class HomeFragment : Fragment() {
     // start Video call
     private fun startVideoCall(channelId: String) {
         hideDialog()
+        currentDocumentId = null
         activity?.supportFragmentManager?.beginTransaction()?.let {
             it.replace(
                 R.id.flFragContainer,
