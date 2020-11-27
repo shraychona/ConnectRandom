@@ -35,6 +35,17 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude("META-INF/*.kotlin_module")
+    }
 }
 
 dependencies {
@@ -52,6 +63,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:${libraries.architectureComponentsVersion}"
     implementation "com.google.android.gms:play-services-ads:${libraries.adMob}"
     implementation "com.afollestad.assent:core:${libraries.runtimePermissions}"
+    implementation "com.afollestad.material-dialogs:bottomsheets:${libraries.materialDialogs}"
     implementation platform('com.google.firebase:firebase-bom:26.1.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'

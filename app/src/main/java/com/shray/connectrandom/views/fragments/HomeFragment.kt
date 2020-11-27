@@ -7,11 +7,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.afollestad.assent.Permission
 import com.afollestad.assent.runWithPermissions
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.Timestamp
@@ -42,7 +42,7 @@ class HomeFragment : Fragment() {
      * Variables
      */
     private val db by lazy { Firebase.firestore.collection(FIRESTORE_KEY_COLLECTION_NAME) }
-    private lateinit var countdownTimer: CountDownTimer
+    private var countdownTimer: CountDownTimer? = null
 
     private var isRunning: Boolean = false
     private var dialog: Dialog? = null
@@ -93,27 +93,27 @@ class HomeFragment : Fragment() {
             override fun onTick(p0: Long) {
             }
         }
-        countdownTimer.start()
+        countdownTimer?.start()
     }
 
     private fun showDialog() {
-        dialog = Dialog(requireContext())
-        dialog!!.apply {
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setCancelable(false)
-            setContentView(R.layout.dialog_finding_partner)
-            tvCancel.setOnClickListener {
-                dialog?.dismiss()
-                countdownTimer.cancel()
+        dialog = MaterialDialog(requireContext()).show {
+            cancelable(false)
+            cancelOnTouchOutside(false)
+            cornerRadius(res = R.dimen.dialog_corner_radius)
+            title(R.string.home_Scree_dialog_title)
+            message(R.string.home_Scree_dialog_body)
+            negativeButton(R.string.home_screen_dialog_cancel) {
+                countdownTimer?.cancel()
                 isRunning = false
                 documentListener?.remove()
+                hideDialog()
             }
         }
-        dialog!!.show()
     }
 
     private fun hideDialog() {
-        dialog?.hide()
+        dialog?.dismiss()
         dialog = null
     }
 
@@ -181,8 +181,7 @@ class HomeFragment : Fragment() {
                     if (snapshot.data?.getValue(FIRESTORE_KEY_IS_CONSUMED) as Boolean) {
                         Log.d(TAG, "Current data: ${snapshot.data}")
                         Log.d(TAG, "video call started")
-                        hideDialog()
-                        countdownTimer.cancel()
+                        countdownTimer?.cancel()
                         isRunning = false
                         startVideoCall(documentId)
                     }
@@ -195,15 +194,16 @@ class HomeFragment : Fragment() {
 
     // start Video call
     private fun startVideoCall(channelId: String) {
+        hideDialog()
         (activity as MainActivity).doFragmentTransaction(
             VideoCallFragment.newInstance(channelId),
             VideoCallFragment.TAG
         )
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         countdownTimer?.cancel()
         documentListener?.remove()
-        super.onDestroy()
+        super.onDestroyView()
     }
 }
