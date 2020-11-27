@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.shray.connectrandom">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -20,7 +21,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ConnectRandom"
         android:requestLegacyExternalStorage="true">
-        <activity android:name=".views.activities.MainActivity">
+        <activity
+            android:name=".views.activities.MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,7 +35,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-7728790311167680~9764106545"/>
+            android:value="ca-app-pub-7728790311167680~9764106545" />
     </application>
 
 </manifest>
