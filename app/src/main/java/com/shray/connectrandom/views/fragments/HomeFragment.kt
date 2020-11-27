@@ -15,6 +15,7 @@ import com.afollestad.assent.runWithPermissions
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.shray.connectrandom.R
@@ -44,9 +45,9 @@ class HomeFragment : Fragment() {
     private lateinit var countdownTimer: CountDownTimer
 
     private var isRunning: Boolean = false
-    private val dialog by lazy {
-        Dialog(requireContext())
-    }
+    private var dialog: Dialog? = null
+    private var documentListener: ListenerRegistration? = null
+
 
     /**
      * Fragment lifecycle methods
@@ -70,9 +71,6 @@ class HomeFragment : Fragment() {
                 findChannelId()
             }
         }
-
-        // setup dialog
-        setupDialog()
     }
 
     /**
@@ -83,7 +81,7 @@ class HomeFragment : Fragment() {
         isRunning = true
         countdownTimer = object : CountDownTimer(15000, 1000) {
             override fun onFinish() {
-                dialog.hide()
+                hideDialog()
                 Toast.makeText(
                     requireContext(),
                     "No user found please try again after some time",
@@ -98,23 +96,32 @@ class HomeFragment : Fragment() {
         countdownTimer.start()
     }
 
-    private fun setupDialog() {
-        dialog.apply {
+    private fun showDialog() {
+        dialog = Dialog(requireContext())
+        dialog!!.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setCancelable(false)
             setContentView(R.layout.dialog_finding_partner)
             tvCancel.setOnClickListener {
-                dialog.dismiss()
+                dialog?.dismiss()
                 countdownTimer.cancel()
                 isRunning = false
+                documentListener?.remove()
             }
         }
+        dialog!!.show()
+    }
+
+    private fun hideDialog() {
+        dialog?.hide()
+        dialog = null
     }
 
     /**
      * Firestore methods to manage channel ids
      */
     private fun findChannelId() {
+        showDialog()
         val calenderTime = Calendar.getInstance()
         calenderTime.add(Calendar.SECOND, -15)
         val timestamp = Timestamp(Date(calenderTime.time.time))
@@ -147,7 +154,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun createNewChannel() {
-        dialog.show()
         val newChannel = hashMapOf(
             FIRESTORE_KEY_IS_CONSUMED to false,
             FIRESTORE_KEY_TIME_STAMP to Timestamp(Date())
@@ -164,7 +170,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeCreatedChannel(documentId: String) {
-        db.document(documentId).addSnapshotListener { snapshot, error ->
+        documentListener = db.document(documentId).addSnapshotListener { snapshot, error ->
             if (error != null) {
                 Log.w(TAG, "Listen failed.", error)
                 return@addSnapshotListener
@@ -175,7 +181,7 @@ class HomeFragment : Fragment() {
                     if (snapshot.data?.getValue(FIRESTORE_KEY_IS_CONSUMED) as Boolean) {
                         Log.d(TAG, "Current data: ${snapshot.data}")
                         Log.d(TAG, "video call started")
-                        dialog.hide()
+                        hideDialog()
                         countdownTimer.cancel()
                         isRunning = false
                         startVideoCall(documentId)
@@ -197,6 +203,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroy() {
         countdownTimer?.cancel()
+        documentListener?.remove()
         super.onDestroy()
     }
 }
