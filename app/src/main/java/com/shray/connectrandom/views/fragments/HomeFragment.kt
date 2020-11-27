@@ -19,7 +19,6 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.shray.connectrandom.R
-import com.shray.connectrandom.views.activities.MainActivity
 import com.shray.connectrandom.views.utils.inflate
 import kotlinx.android.synthetic.main.dialog_finding_partner.*
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -195,10 +194,15 @@ class HomeFragment : Fragment() {
     // start Video call
     private fun startVideoCall(channelId: String) {
         hideDialog()
-        (activity as MainActivity).doFragmentTransaction(
-            VideoCallFragment.newInstance(channelId),
-            VideoCallFragment.TAG
-        )
+        activity?.supportFragmentManager?.beginTransaction()?.let {
+            it.replace(
+                R.id.flFragContainer,
+                VideoCallFragment.newInstance(channelId),
+                VideoCallFragment.TAG
+            )
+            it.addToBackStack(VideoCallFragment.TAG)
+            it.commit()
+        }
     }
 
     override fun onDestroyView() {

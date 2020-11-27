@@ -10,15 +10,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        doFragmentTransaction(HomeFragment(), HomeFragment.TAG)
-    }
-
-    fun doFragmentTransaction(
-        fragment: androidx.fragment.app.Fragment,
-        tag: String = ""
-    ) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.flFragContainer, fragment, tag)
+        fragmentTransaction.add(R.id.flFragContainer, HomeFragment(), HomeFragment.TAG)
         fragmentTransaction.commit()
     }
 }
