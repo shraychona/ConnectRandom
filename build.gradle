@@ -30,6 +30,7 @@ ext {
             appcompat                    : "1.1.0",
             constraintLayout             : "2.0.4",
             runtimePermissions           : "3.0.0-RC4",
+            materialDialogs              : "3.3.0",
             adMob                        : "19.5.0"
     ]
 }

@@ -45,6 +45,13 @@ class VideoCallFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initializeAgoraVariables()
+        setupLocalVideo()
+        joinChannel()
+
+        ivEndCall.setOnClickListener {
+            leaveChannel()
+            activity?.supportFragmentManager?.popBackStackImmediate()
+        }
     }
 
     private fun initializeAgoraVariables() {
@@ -64,14 +71,12 @@ class VideoCallFragment : Fragment() {
             // Listen for the onUserOffline callback.
             // This callback occurs when the remote user leaves the channel or drops offline.
             override fun onUserOffline(uid: Int, reason: Int) {
-                activity?.runOnUiThread { onRemoteUserLeft(uid) }
+                activity?.runOnUiThread { onRemoteUserLeft() }
             }
         }
         try {
             mRtcEngine =
                 RtcEngine.create(context, getString(R.string.agora_app_id), mRtcEventHandler)
-            joinChannel()
-            setupLocalVideo()
         } catch (e: Exception) {
             Log.e(TAG, Log.getStackTraceString(e))
             throw RuntimeException(
@@ -93,6 +98,7 @@ class VideoCallFragment : Fragment() {
         container.addView(surfaceView)
         // Set the local video view.
         mRtcEngine!!.setupLocalVideo(VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_FIT, 0))
+        mRtcEngine!!.muteLocalAudioStream(false)
     }
 
     private fun joinChannel() {
@@ -117,25 +123,25 @@ class VideoCallFragment : Fragment() {
         mRtcEngine!!.setupRemoteVideo(VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_FIT, uid))
     }
 
-    private fun onRemoteUserLeft(uid: Int) {
-//        if (mRemoteVideo != null && mRemoteVideo.uid === uid) {
-//            removeFromParent(mRemoteVideo)
-//            // Destroys remote view
-//            mRemoteVideo = null
-//        }
-        activity?.supportFragmentManager?.popBackStack()
+    private fun onRemoteUserLeft() {
+        leaveChannel()
+        activity?.supportFragmentManager?.popBackStackImmediate()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        leaveChannel()
-        RtcEngine.destroy()
+        mRtcEngine!!.leaveChannel()
         mRtcEngine = null
+        RtcEngine.destroy()
     }
 
     private fun leaveChannel() {
         // Leave the current channel.
+        val remoteContainer = remote_video_view_container as FrameLayout
+        remoteContainer.removeAllViews()
+        val selfContainer = local_video_view_container as FrameLayout
+        selfContainer.removeAllViews()
         mRtcEngine!!.leaveChannel()
     }
 }
